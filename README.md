@@ -78,3 +78,49 @@ Default web root:
 ```bash
 /usr/share/nginx/html
 ```
+## Creating a Mysql Database container
+Pulling mysql image from Docker Hub Registry 
+```sh
+   docker pull mysql/mysql-server:latest
+```
+Verifying docker image
+```sh
+  docker images ls 
+```
+Running mysql container in docker image 
+```sh
+   docker run --name my_mysql_db -e MYSQL_ROOT_PASSWORD=Passw0rd! -d mysql/mysql-server:latest
+```
+Verifying the container is running
+
+```sh
+   docker ps -a
+```
+Running mysql client container, instead of installing 
+```sh
+   docker run --network tooling_app_network --name mysql-client -it --rm mysql mysql -h mysqlserverhost -u tooling_user -p
+```
+
+Runnning the Tooling app
+
+```sh
+   docker build -t tooling:0.0.1 .
+```
+
+Running the container
+```sh
+   docker run -d \
+  --network tooling_app_network \
+  -p 8085:80 \
+  -v $(pwd)/.env:/var/www/.env \
+  -v $(pwd)/html/db_conn.php:/var/www/db_conn.php \
+  -v $(pwd)/html/login.php:/var/www/login.php \
+  -v $(pwd)/html/home.php:/var/www/home.php \
+  -v $(pwd)/html/logout_popup.php:/var/www/logout_popup.php \
+  -v $(pwd)/html:/var/www/html \
+  --name tooling_app \
+  tooling:0.0.1
+```
+
+Accessing the Application on Browser
+

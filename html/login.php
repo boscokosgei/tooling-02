@@ -1,51 +1,40 @@
+<?php
+ob_start();
+session_start();
 
-<?php  
-include('db_conn.php');
-if(isset($_POST["login"])){  
-  
-if(!empty($_POST['email']) && !empty($_POST['password'])) {  
-    $email=$_POST['email'];  
-    $pass=$_POST['password'];  
-  
-  //  $conn = mysqli_connect('localhost', 'root', '', 'admin'); 
-    $sql= "SELECT * FROM user WHERE email='".$email."' AND password='".$pass."'";  
-    $query= mysqli_query($conn, $sql);
-    
-    $numrows=mysqli_num_rows($query);  
-    if($numrows!=0)  
-    {  
-    while($row=mysqli_fetch_assoc($query))  
-    {  
-    $dbemail=$row['email'];  
-    $dbpassword=$row['password'];  
-    }  
-  
-    if($email == $dbemail && $pass == $dbpassword)  
-    {  
-    session_start();  
-    $_SESSION['sess_user']=$email;  
-  
-    /* Redirect browser */  
-    header("Location: home.php");  
-    }  
-    } else {  
-    $email_error = "Invalid username or password!";  
-    }  
-  
-} else {  
-    echo "All fields are required!";  
+if (!isset($_SESSION['sess_user'])) {
+    header("Location: login.php");
+    exit();
 }
-// if(!empty($_POST["remember"])) {
-// 	setcookie ("email",$_POST["email"],time()+ 3600);
-// 	setcookie ("password",$_POST["password"],time()+ 3600);
-// 	echo "Cookies Set Successfuly";
-// } else {
-// 	setcookie("email","");
-// 	setcookie("password","");
-// 	echo "Cookies Not Set";
-// }  
-}  
-?>  
+include('db_conn.php');
+
+if (isset($_POST["login"])) {
+
+    if (!empty($_POST['email']) && !empty($_POST['password'])) {
+        $email = $_POST['email'];
+        $pass  = $_POST['password'];
+
+        $sql   = "SELECT * FROM user WHERE email='" . $email . "' AND password='" . $pass . "'";
+        $query = mysqli_query($conn, $sql);
+
+        if ($query && mysqli_num_rows($query) > 0) {
+            $row = mysqli_fetch_assoc($query);
+
+            if ($email == $row['email'] && $pass == $row['password']) {
+                $_SESSION['sess_user'] = $email;
+
+                /* Redirect browser */
+                header("Location: home.php"); // Replace with your target dashboard file
+                exit();
+            }
+        } else {
+            echo "Invalid email or password!";
+        }
+    } else {
+        echo "All fields are required!";
+    }
+}
+?>
 <!DOCTYPE html>
 <html>
 <head>
