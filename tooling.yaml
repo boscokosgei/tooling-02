@@ -1,0 +1,30 @@
+version: "3.9"
+services:
+  tooling_frontend:
+    build: .
+    ports:
+      - "5001:80"
+    volumes: 
+      - tooling_frontend:/var/www/html
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db
+      - DB_USER=tooling_user
+      - DB_PASS=Passw0rd!
+      - DB_NAME=toolingdb
+
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_DATABASE: toolingdb
+      MYSQL_USER: tooling_user
+      MYSQL_PASSWORD: Passw0rd!
+      MYSQL_RANDOM_ROOT_PASSWORD: '1'
+    volumes:
+      - db:/var/lib/mysql
+
+volumes:
+  tooling_frontend:
+  db:
