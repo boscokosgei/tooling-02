@@ -18,7 +18,7 @@ Verifying the image pulled
 ```sh
    docker images ls
 ```
-![Images](Pulling%20mysql%20image.png)
+![Images](./Images/Pulling%20mysql%20image.png)
 
 ## How to use this repository
 
