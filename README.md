@@ -20,115 +20,91 @@ Verifying the image pulled
 ```
 ![Images](./Images/Pulling%20mysql%20image.png)
 
-## How to use this repository
+Deploying Mysql container
+![Images](./Images/mysql_Container.png)
 
-The build is automatically triggered by a git push to your feature/[branch]
 
-## First clone the repository to your workstation
+Creating a Docker network for the containers to communicate
+![Images](./Images/Mysql_Db.png)
+## Connecting to Mysql server from a second container running Mysql Client
+![Images](./Images/mysql-client%20container.png)
 
-```bash
+
+
+## Clonning Tooling-app Repo 
+
+```sh
 git clone https://github.com/StegTechHub/tooling-02.git tooling
-cd tooling
+cd tooling-02
 ```
 
-Create a feature branch. # Always start with feature/[name of your branch]
+Updating the mysql database schema with the configuration file on db_conn.php
 
-```bash
-git branch -b feature/add-css-style-to-about-us-page
-```
-
+![Images](./Images/Update%20env%20Variables.png)
 Update the application code in `./html/`
 
-Then add/commit/push to gitlab
+Creating a Dockerfile for tooling app
+and building the image in order to run the container
+![Images](./Images/Verifying%20Application%20is%20up.png)
 
-```bash
-git status # to see your changes
-```
+## Accessing the Application on Browser
+navigating to http://localhost:8085 to access the application
+![Images](./Images/Login%20to%20Steghub%20app.png)
 
-```bash
-git add --all # If you are satisfied with your changes and willing to push everything. Otherwise, select only the files to add
-```
+Logging in to the app with default username and password
+![Images](./Images/Logged%20in%20successfully.png)
 
-```bash
-git commit -m "Put some message about this push here"
-```
+## Implementing a POC to migrate the PHP-Todo app into a containerised application
+Using the same mysql database to connnect a php-todo-app and containerise the application by creating a dockerfile
 
-## Push your changes to gitlab, and merge to dev branch
-
-```bash
-git push --set-upstream origin feature/[Your branch name]
-```
-
-### Validate your changes have been triggered by gitlab-ci in
-
-[tooling-scm](https://github.com/StegTechHub/tooling-02.git)
-
-### Check the image have been pushed to
-
-[Google Container Registry](https://console.cloud.google.com/gcr/images/non-prod-pdz/EU/tooling?project=non-prod-pdz&authuser=1&gcrImageListsize=30) (Depending on the environment. Either non-prod or prod)
-
-## pulling the image
-
-```bash
-docker pull eu.gcr.io/$environment/tooling:${tag-version}
-```
-
-## Running (You can do this step without the pulling the above as it will put down if not found locally)
-
-To run the container:
-
-```bash
- docker run -d eu.gcr.io/$environment/tooling:${tag-version}
-```
-
-Default web root:
-
-```bash
-/usr/share/nginx/html
-```
-## Creating a Mysql Database container
-Pulling mysql image from Docker Hub Registry 
+### Clonning the php-todo-app
 ```sh
-   docker pull mysql/mysql-server:latest
+     git clone https://github.com/StegTechHub/php-todo
 ```
-Verifying docker image
-```sh
-  docker images ls 
-```
-Running mysql container in docker image 
-```sh
-   docker run --name my_mysql_db -e MYSQL_ROOT_PASSWORD=Passw0rd! -d mysql/mysql-server:latest
-```
-Verifying the container is running
+![Images](./Images/Cloning%20php-todo.png)
 
-```sh
-   docker ps -a
-```
-Running mysql client container, instead of installing 
-```sh
-   docker run --network tooling_app_network --name mysql-client -it --rm mysql mysql -h mysqlserverhost -u tooling_user -p
-```
+Creating a Dockerfile for php-todo-app
+![Images](./Images/Creating%20Docker%20file%20for%20Php-todo.png)
 
-Runnning the Tooling app
+Building the dockerfile fo the application
+![Images](./Images/Run%20docker%20php-todo-app.png)
 
+### Accessing the application 
+Navigate to the browser to access the php-todo-app
+![Images](./Images/php_todo_app%20working.png)
+
+## Pushing the Image to Dockerhub
+if already have an existing Dockerhub account login on cli via
 ```sh
-   docker build -t tooling:0.0.1 .
+   docker login
 ```
 
-Running the container
-```sh
-   docker run -d \
-  --network tooling_app_network \
-  -p 8085:80 \
-  -v $(pwd)/.env:/var/www/.env \
-  -v $(pwd)/html/db_conn.php:/var/www/db_conn.php \
-  -v $(pwd)/html/login.php:/var/www/login.php \
-  -v $(pwd)/html/home.php:/var/www/home.php \
-  -v $(pwd)/html/logout_popup.php:/var/www/logout_popup.php \
-  -v $(pwd)/html:/var/www/html \
-  --name tooling_app \
-  tooling:0.0.1
-```
+![Images](./Images/Pushing%20image%20to%20dockerhub.png)
+
+Confirming the Docker Images on Dockerhub
+![Images](./Images/image%20pushed%20to%20dockerhub.png)
+
+### Creating a Jenkins Pipeline for the CI 
+On the php-todo-app folder create a Jenkins file
+Installing and running Jenkins on container
+![Images](./Images/Installing%20Jenkins%20on%20VM.png)
+
+Accessing the jenkins UI on the browser
+![Images](./Images/Jenkins%20Up%20and%20Running.png)
+
+Creating a Job 
+![Images](./Images/Jenkins%20Pipeline.png)
+
+Updating the Jenkins file to connect with Github repo
+![Images](./Images/Jenkins%20pipeline%20configuration.png)
+
+Building the pipeline
+![Images](./Images/Pipeline%20Build%20Successful.png)
+
+### Verifying that the images pushed from the CI can be found on Dockerhub
+Accessing the Dockerhub and openning the images folder
+![Images](./Images/Confirming%20Docker%20images%20match%20with%20build.png)
+
 
 Accessing the Application on Browser
 
